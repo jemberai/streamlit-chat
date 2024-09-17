@@ -1,11 +1,9 @@
 name: Build & Publish Image
 
 on:
-  pull_request:
-    types:
-      - closed
-    branches:
-      - main
+  workflow_dispatch:
+  push:
+    branches: ['main']
 
 env:
   REGISTRY_LOGIN_SERVER: quay.io
