@@ -1,3 +1,4 @@
+import os
 import logging
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
@@ -30,6 +31,6 @@ class ChatGPT():
         )
 
         chain_resp = chain.invoke(prompt)
-        logging.warn(chain_resp)
+        logging.debug(chain_resp)
 
         return chain_resp

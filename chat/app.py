@@ -2,7 +2,10 @@ import os
 import logging
 import streamlit as st
 from streamlit_cookies_controller import CookieController
-from tempfile import NamedTemporaryFile
+import uuid
+import mimetypes
+import tempfile
+from pathlib import Path
 
 from data_intake import DataIntakeService
 from retriever import DataIntakeRetriever
@@ -70,6 +73,20 @@ st.markdown("""
 client = DataIntakeService()
 if os.environ["DATA_INTAKE_ACCESS_TOKEN"] == '':
     client.request_oauth2_token()
+
+upload_mimetypes = ['pdf']
+uploader = st.file_uploader("Upload file",upload_mimetypes)
+if uploader is not None:
+    logging.info("ATTEMPTING TO UPLOAD")
+    trace_id = uuid.uuid4().hex
+    filename = uploader.name
+    suffix = Path(uploader.name).suffix
+    mime = mimetypes.guess_type(uploader.name)[0]
+
+    with tempfile.NamedTemporaryFile(suffix=suffix) as temp_file:
+        temp_file.write(uploader.getvalue())
+
+        client.request_create_upload_cloudevent(trace_id, filename, mime, temp_file.name)
 
 if "messages" not in st.session_state.keys():
     st.session_state.messages = [

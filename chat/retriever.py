@@ -16,16 +16,20 @@ class DataIntakeRetriever(BaseRetriever):
         self, query: str, *, run_manager: CallbackManagerForRetrieverRun
     ) -> List[Document]:
         """Sync implementations for retriever."""
-        docs = self.client.request_query_topk(query, self.k, self.similarityThreshold)
-        logging.info("Got TopK documents")
         matching_documents = []
-        for doc in docs:
-            logging.info(docs)
-            document = Document(
-                page_content=doc['content'],
-                metadata={"source": "https://example.jember.ai"}
-            )
-            matching_documents.append(document)
-        logging.info("==================")
+        try:
+            docs = self.client.request_query_topk(query, self.k, self.similarityThreshold)
+            logging.info("Got TopK documents")
+        
+            for doc in docs:
+                logging.info(docs)
+                document = Document(
+                    page_content=doc['content'],
+                    metadata={"source": "https://example.jember.ai"}
+                )
+                matching_documents.append(document)
+            logging.info("==================")
+        except:
+            logging.error("Failed to get TopK docs")
 
         return matching_documents
