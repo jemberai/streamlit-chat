@@ -11,13 +11,14 @@ class DataIntakeService():
         auth_server_url = os.environ["DATA_INTAKE_URL"]+"/oauth2/token"
         client_id = os.environ["DATA_INTAKE_CLIENT_ID"]
         client_secret = os.environ["DATA_INTAKE_CLIENT_SECRET"]
+        auth_server_use_ssl = (os.getenv('DATA_INTAKE_USE_SSL', 'True') == 'True')
 
         token_req_payload = {'grant_type': 'client_credentials'}
 
         token_response = requests.post(
             auth_server_url,
             data=token_req_payload, 
-            verify=False, 
+            verify=auth_server_use_ssl, 
             allow_redirects=False,
             auth=(client_id, client_secret)
         )
